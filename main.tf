@@ -13,7 +13,7 @@ provider "hcloud" {
 
 resource "hcloud_floating_ip" "cors_anywhere_ip" {
   type = "ipv4"
-  home_location = "nbg1"  # Replace with your preferred location
+  home_location = "fsn1"  # Replace with your preferred location
 }
 
 resource "hcloud_floating_ip_assignment" "cors_anywhere_ip_assignment" {
