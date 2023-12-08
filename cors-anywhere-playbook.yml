@@ -1,6 +1,6 @@
 ---
 - name: Set up CORS Anywhere Server with SSL from Let's Encrypt
-  hosts: your_server_group
+  hosts: all
   become: yes
   tasks:
     - name: Update and upgrade apt packages
