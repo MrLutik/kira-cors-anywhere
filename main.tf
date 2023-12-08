@@ -21,7 +21,7 @@ resource "hcloud_floating_ip_assignment" "cors_anywhere_ip_assignment" {
   server_id      = hcloud_server.cors_anywhere_vm.id
 }
 
-resource "hcloud_ssh_key" "ansible_ssh_pub_key" {
+resource "hcloud_ssh_key" "ssh_pub_key" {
   name       = "ANSIBLE_SSH_PUBLIC_KEY"
   public_key = var.ansible_ssh_public_key
 }
