@@ -62,8 +62,14 @@ jobs:
     - name: Retrieve IP Address
       id: get-ip
       run: echo "::set-output name=VM_IP::$(terraform output -raw ip)"
+    
+    - name: Create SSH Key File
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa 
+        chmod 400 ~/.ssh/id_rsa
 
     - name: Run Ansible Playbook
-      run: ansible-playbook -i '${{ steps.get-ip.outputs.VM_IP }},' cors-anywhere-playbook.yml --private-key ${{ secrets.ANSIBLE_PRIVATE_KEY }}
+      run: ansible-playbook -i '${{ steps.get-ip.outputs.VM_IP }},' cors-anywhere-playbook.yml --private-key ~/.ssh/id_rsa
       env:
         ANSIBLE_PRIVATE_KEY_FILE: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
