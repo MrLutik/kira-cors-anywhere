@@ -41,20 +41,20 @@ jobs:
     - name: Terraform validate
       run: terraform validate
       env:
-        TF_LOG: TRACE
+        TF_LOG: DEBUG
 
 
     - name: Terraform plan
       run: terraform plan
       env: 
-        TF_LOG: TRACE
+        TF_LOG: DEBUG
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
       env:
         TF_VAR_hcloud_token: ${{ secrets.HCLOUD_TOKEN }}
         TF_VAR_ansible_ssh_public_key: ${{ secrets.ANSIBLE_SSH_PUBLIC_KEY }}
-        TF_LOG: TRACE
+        TF_LOG: DEBUG
 
 
     - name: Retrieve IP Address
