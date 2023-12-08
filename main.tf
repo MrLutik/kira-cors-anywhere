@@ -2,7 +2,7 @@ terraform {
   required_providers {
     hcloud = {
       source  = "hetznercloud/hcloud"
-      version = "~> 1.28.0"
+      version = "~> 1.44.1"
     }
   }
 }
@@ -21,10 +21,15 @@ resource "hcloud_floating_ip_assignment" "cors_anywhere_ip_assignment" {
   server_id      = hcloud_server.cors_anywhere_vm.id
 }
 
+resource "hcloud_ssh_key" "ansible_ssh_pub_key" {
+  name       = "ANSIBLE_SSH_PUBLIC_KEY"
+  public_key = var.ansible_ssh_public_key
+}
+
 resource "hcloud_server" "cors_anywhere_vm" {
   name        = "cors-anywhere-server"
   image       = "ubuntu-20.04"
-  server_type = "cx11"
+  server_type = "cax21"
 } 
 
 output "ip" {
