@@ -37,12 +37,17 @@ jobs:
       env:
         HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
 
-    - name: Terraform plan
-      run: terraform plan
 
     - name: Terraform validate
       run: terraform validate
+      env:
+        TF_LOG: TRACE
 
+
+    - name: Terraform plan
+      run: terraform plan
+      env: 
+        TF_LOG: TRACE
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
