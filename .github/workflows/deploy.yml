@@ -49,6 +49,7 @@ jobs:
       env: 
         TF_LOG: DEBUG
         TF_VAR_hcloud_token: ${{ secrets.HCLOUD_TOKEN }}
+        TF_VAR_ansible_ssh_public_key: ${{ secrets.ANSIBLE_SSH_PUBLIC_KEY }}
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
