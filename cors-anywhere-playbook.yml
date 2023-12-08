@@ -1,0 +1,103 @@
+---
+- name: Set up CORS Anywhere Server with SSL from Let's Encrypt
+  hosts: your_server_group
+  become: yes
+  tasks:
+    - name: Update and upgrade apt packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Install Node.js and NPM
+      apt:
+        name: nodejs
+        state: latest
+
+    - name: Install NPM
+      apt:
+        name: npm
+        state: latest
+
+    - name: Clone CORS Anywhere repository
+      git:
+        repo: 'https://github.com/Rob--W/cors-anywhere.git'
+        dest: /opt/cors-anywhere
+        clone: yes
+        update: yes
+
+    - name: Install CORS Anywhere dependencies
+      npm:
+        path: /opt/cors-anywhere
+
+    - name: Install nginx for SSL termination
+      apt:
+        name: nginx
+        state: latest
+
+    - name: Install software-properties-common (required for add-apt-repository)
+      apt:
+        name: software-properties-common
+        state: present
+
+    - name: Add Certbot repository
+      apt_repository:
+        repo: 'ppa:certbot/certbot'
+        state: present
+
+    - name: Install Certbot
+      apt:
+        name: certbot
+        state: latest
+
+    - name: Obtain SSL certificate from Let's Encrypt
+      shell: certbot --nginx -d cors.kira.network --non-interactive --agree-tos --email your-email@example.com
+      args:
+        creates: /etc/letsencrypt/live/cors.kira.network/fullchain.pem
+
+    - name: Set up CORS Anywhere Server with SSL and Nginx Configuration
+      hosts: your_server_group
+      become: yes
+      tasks:
+        # [Previous tasks remain the same]
+
+        - name: Create Nginx configuration for CORS Anywhere
+          blockinfile:
+            path: /etc/nginx/sites-available/cors-anywhere
+            create: yes
+            block: |
+              server {
+                listen 80;
+                server_name cors.kira.network;  # Replace with your domain
+
+                location / {
+                  proxy_pass http://localhost:8080;  # Assuming CORS Anywhere runs on port 8080
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+                }
+
+                listen 443 ssl; # managed by Certbot
+                ssl_certificate /etc/letsencrypt/live/cors.kira.network/fullchain.pem; # managed by Certbot
+                ssl_certificate_key /etc/letsencrypt/live/cors.kira.network/privkey.pem; # managed by Certbot
+                include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+                ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+              }
+
+        - name: Enable Nginx CORS Anywhere configuration
+          ansible.builtin.file:
+            src: /etc/nginx/sites-available/cors-anywhere
+            dest: /etc/nginx/sites-enabled/cors-anywhere
+            state: link
+
+        - name: Reload Nginx to apply new configuration
+          systemd:
+            name: nginx
+            state: reloaded
+
+        - name: Start CORS Anywhere server
+          shell: 'cd /opt/cors-anywhere && npm start &'
+          async: 15
+          poll: 0
+
+

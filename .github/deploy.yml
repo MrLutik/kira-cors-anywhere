@@ -1,0 +1,53 @@
+name: Hetzner Deploy on PR
+
+on:
+  pull_request:
+    branches: [ master ]
+    types: [opened, synchronize, reopened]
+    paths-ignore:
+      - 'cidi/**'
+  push:
+    branches: 
+      - feature/*
+      - bugfix/*
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v20a5c61591373683505ea898e09a3ea4f39ef2b9c
+      with:
+        python-version: '3.x'  # Use the Python version required for your Ansible setup
+
+    - name: Install Ansible
+      run: pip install ansible
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v169c00852f1304c321337f45a105731218c2d5544
+
+    - name: Terraform Initialize
+      run: terraform init
+      env:
+        HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+      env:
+        HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
+
+    - name: Retrieve IP Address
+      id: get-ip
+      run: echo "::set-output name=VM_IP::$(terraform output -raw ip)"
+
+    - name: Add SSH Key to Known Hosts
+      run: ssh-keyscan -H ${{ steps.get-ip.outputs.VM_IP }} >> ~/.ssh/known_hosts
+
+
+    - name: Run Ansible Playbook
+      run: ansible-playbook -i '${{ steps.get-ip.outputs.VM_IP }},' cors-anywhere-playbook.yml
+      env:
+        ANSIBLE_PRIVATE_KEY_FILE: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
