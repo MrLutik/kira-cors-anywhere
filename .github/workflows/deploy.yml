@@ -48,6 +48,7 @@ jobs:
       run: terraform plan
       env: 
         TF_LOG: DEBUG
+        TF_VAR_hcloud_token: ${{ secrets.HCLOUD_TOKEN }}
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
