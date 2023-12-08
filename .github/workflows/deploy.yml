@@ -10,9 +10,12 @@ on:
     branches: 
       - feature/*
       - bugfix/*
+    paths-ignore:
+      - 'cidi/**'
 
 jobs:
   build-and-deploy:
+    if: "!startsWith(github.head_ref, 'cidi/')"
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
