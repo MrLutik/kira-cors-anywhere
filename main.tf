@@ -10,16 +10,17 @@ terraform {
 provider "hcloud" {
   token = var.hcloud_token
 }
-
-resource "hcloud_floating_ip" "cors_anywhere_ip" {
-  type = "ipv4"
-  home_location = "fsn1"  # Replace with your preferred location
+resource "hcloud_primary_ip" "main" {
+  name          = "primary_ip_test"
+  datacenter    = "fsn1-dc14"
+  type          = "ipv4"
+  assignee_type = "server"
+  auto_delete   = true
+  labels = {
+    "hello" : "world"
+  }
 }
 
-resource "hcloud_floating_ip_assignment" "cors_anywhere_ip_assignment" {
-  floating_ip_id = hcloud_floating_ip.cors_anywhere_ip.id
-  server_id      = hcloud_server.cors_anywhere_vm.id
-}
 
 resource "hcloud_ssh_key" "ssh_pub_key" {
   name       = "ANSIBLE_SSH_PUBLIC_KEY"
@@ -30,6 +31,10 @@ resource "hcloud_server" "cors_anywhere_vm" {
   name        = "cors-anywhere-server"
   image       = "ubuntu-20.04"
   server_type = "cax21"
+  datacenter  = "fsn1-dc14"
+  public_net {
+    ipv4 = hcloud_primary_ip.main.id
+  }
 } 
 
 output "ip" {
