@@ -3,7 +3,7 @@ variable "hcloud_token" {
   type        = string
 }
 
-variable "ssh_public_key" {
+variable "ansible_ssh_pub_key" {
   description = "Public SSH key"
   type        = string
 }
