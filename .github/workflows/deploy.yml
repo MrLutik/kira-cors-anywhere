@@ -63,10 +63,6 @@ jobs:
       id: get-ip
       run: echo "::set-output name=VM_IP::$(terraform output -raw ip)"
 
-    - name: Add SSH Key to Known Hosts
-      run: ssh-keyscan -H ${{ steps.get-ip.outputs.VM_IP }} >> ~/.ssh/known_hosts
-
-
     - name: Run Ansible Playbook
       run: ansible-playbook -i '${{ steps.get-ip.outputs.VM_IP }},' cors-anywhere-playbook.yml --private-key ${{ secrets.ANSIBLE_PRIVATE_KEY }}
       env:
