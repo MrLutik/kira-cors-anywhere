@@ -37,11 +37,19 @@ jobs:
       env:
         HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
 
+    - name: Terraform plan
+      run: terraform plan
+
+    - name: Terraform validate
+      run: terraform validate
+
+
     - name: Terraform Apply
       run: terraform apply -auto-approve
       env:
         TF_VAR_hcloud_token: ${{ secrets.HCLOUD_TOKEN }}
         TF_VAR_ansible_ssh_public_key: ${{ secrets.ANSIBLE_SSH_PUBLIC_KEY }}
+        TF_LOG: TRACE
 
 
     - name: Retrieve IP Address
