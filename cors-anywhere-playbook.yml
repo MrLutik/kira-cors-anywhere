@@ -39,7 +39,7 @@
     - name: Obtain SSL certificate from Let's Encrypt
       shell: certbot --nginx -d cors.keks.network --non-interactive --agree-tos --email hello@kira.network
       args:
-        creates: /etc/letsencrypt/live/cors.kira.network/fullchain.pem
+        creates: /etc/letsencrypt/live/cors.keks.network/fullchain.pem
       when: not ansible_check_mode
 
     - name: Clone CORS Anywhere repository
@@ -60,7 +60,7 @@
         block: |
           server {
             listen 443 ssl;
-            server_name cors.kira.network;
+            server_name cors.keks.network;
 
             location / {
               proxy_pass http://localhost:8080;  
@@ -70,8 +70,8 @@
               proxy_set_header X-Forwarded-Proto $scheme;
             }
 
-            ssl_certificate /etc/letsencrypt/live/cors.kira.network/fullchain.pem;
-            ssl_certificate_key /etc/letsencrypt/live/cors.kira.network/privkey.pem;
+            ssl_certificate /etc/letsencrypt/live/cors.keks.network/fullchain.pem;
+            ssl_certificate_key /etc/letsencrypt/live/cors.keks.network/privkey.pem;
             include /etc/letsencrypt/options-ssl-nginx.conf;
             ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
           }
