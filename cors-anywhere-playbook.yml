@@ -1,6 +1,7 @@
 ---
 - name: Set up CORS Anywhere Server with SSL from Let's Encrypt
   hosts: all
+  remote_user: root
   become: yes
   become_user: root
   tasks:
