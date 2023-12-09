@@ -21,9 +21,10 @@
         - software-properties-common
 
     - name: Add Certbot repository
-      apt_repository:
-        repo: 'ppa:certbot/certbot'
+      apt:
+        name: certbot
         state: present
+      become: yes
 
     - name: Install Certbot
       apt:
