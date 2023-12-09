@@ -63,6 +63,13 @@
             server_name cors.keks.network;
 
             location / {
+              #CORS headers
+              add_header 'Access-Control-Allow-Origin' '*';
+              add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+              add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+              add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+
+              #PROXY  
               proxy_pass http://localhost:8080;  
               proxy_set_header Host $host;
               proxy_set_header X-Real-IP $remote_addr;
