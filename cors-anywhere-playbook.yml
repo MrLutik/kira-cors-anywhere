@@ -30,6 +30,11 @@
       apt:
         name: certbot
         state: latest
+    
+    - name: Install Certbot Nginx plugin
+      apt:
+        name: python3-certbot-nginx
+        state: present
 
     - name: Obtain SSL certificate from Let's Encrypt
       shell: certbot --nginx -d cors.kira.network --non-interactive --agree-tos --email hello@kira.network
