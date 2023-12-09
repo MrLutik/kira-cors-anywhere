@@ -70,7 +70,7 @@ jobs:
         chmod 400 ~/.ssh/id_rsa
     - name: Wait for SSH to become available
       run: |
-        timeout=60 # Timeout in seconds
+        timeout=30 # Timeout in seconds
         while ! ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@159.69.188.142 'exit' && [ $timeout -gt 0 ]; do
           echo "Waiting for SSH to become available..."
           sleep 5

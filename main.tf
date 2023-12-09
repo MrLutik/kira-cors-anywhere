@@ -32,6 +32,7 @@ resource "hcloud_server" "cors_anywhere_vm" {
   image       = "ubuntu-20.04"
   server_type = "cax21"
   datacenter  = "fsn1-dc14"
+  ssh_keys    = [hcloud_ssh_key.ssh_pub_key.id] 
   public_net {
     ipv4 = hcloud_primary_ip.main.id
   }
