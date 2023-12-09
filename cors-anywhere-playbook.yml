@@ -37,7 +37,7 @@
         state: present
 
     - name: Obtain SSL certificate from Let's Encrypt
-      shell: certbot --nginx -d cors.kira.network --non-interactive --agree-tos --email hello@kira.network
+      shell: certbot --nginx -d cors.keks.network --non-interactive --agree-tos --email hello@kira.network
       args:
         creates: /etc/letsencrypt/live/cors.kira.network/fullchain.pem
       when: not ansible_check_mode
